@@ -1,11 +1,9 @@
 <template>
   <div>
     <div class="title">Finding You're Sattelite</div>
-    <div class="message">
-      {{ msg }}
-    </div>
-      
-    <FindSatteImg :foundSatellite="foundSatellite" />
+    <div class="message">{{ msg }}</div>
+
+    <FindSatteImg :foundSatellite="foundSatellite"/>
 
     <router-link to="/rightdirinstruct" v-if="foundSatellite">
       <button class="paginationButton bColorRegular">Next</button>
@@ -16,6 +14,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import FindSatteImg from "../components/FindSatteImg.vue";
+// import orientation from "../assets/Orientation.js";
 
 import {
   getSatteName,
@@ -70,7 +69,7 @@ export default class Locate extends Vue {
       }
     };
     this.msg = `We have lots of sattelites. We're looking for a good match...`;
-    
+
     console.log("Locate vue: created: platform: ", navigator);
     this.platform = navigator.platform;
 
@@ -81,8 +80,9 @@ export default class Locate extends Vue {
           this.sendToDB(position.coords.longitude, position.coords.latitude);
         },
         error => {
+          alert(`Error: ${error.message}`);
           console.log(error.message);
-          this.msg = `We need you to allow us to access your position`;
+          this.sendToDB(190.3, 30);
         },
         {
           enableHighAccuracy: true,
@@ -128,25 +128,28 @@ export default class Locate extends Vue {
 
   private sendToDB(long: number, lat: number) {
     // This would be a service call but no DB
-    this.getSatteNameDB(long, lat).then(res => {
-      console.log("Locate vue: sendToDB: DB res: ", res);
-      this.foundSatellite = true;
+    this.getSatteNameDB(long, lat)
+      .then(res => {
+        console.log("Locate vue: sendToDB: DB res: ", res);
+        this.foundSatellite = true;
 
-      this.satteName = res.name;
-      this.satteZaxis = res.coord.z;
-      this.satteYaxis = res.coord.y;
+        this.satteName = res.name;
+        this.satteZaxis = res.coord.z;
+        this.satteYaxis = res.coord.y;
 
-      this.msg = `We've found the best satellite for you at your current location. Say 'hello' to your new best friend, ${
-        this.satteName
-      }.`;
-    }).catch( err => {
-      console.log("Locate vue: sendToDB: error ", err);
-    });
+        this.msg = `We've found the best satellite for you at your current location. Say 'hello' to your new best friend, ${
+          this.satteName
+        }.`;
+      })
+      .catch(err => {
+        console.log("Locate vue: sendToDB: error ", err);
+      });
   }
 
   // I am assuming I do a DB call with the long and lat of where I am at
   // The data base would then come back with the name of satellite I am
   // Looking for and z / y axis of where I need to go
+  // This should have its own DB service 
   private async getSatteNameDB(long: number, lat: number) {
     return new Promise<ISatte>((resolve, reject) => {
       setTimeout(() => {

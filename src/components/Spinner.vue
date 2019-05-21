@@ -1,3 +1,37 @@
+<template>
+    <!-- src: https://loading.io/css/ -->
+    <div class="loading lds-spinner">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+</template>
+
+<script lang="ts">
+import { Component, Prop, Vue } from "vue-property-decorator";
+
+@Component({
+  components: {}
+})
+export default class Spinner extends Vue {
+  constructor() {
+    super();
+    console.log("Spinner vue: constructor: created");
+  }
+}
+</script>
+
+<style scoped lang="less">
 .lds-spinner {
     color: official;
     display: inline-block;
@@ -77,3 +111,4 @@
     }
   }
   
+</style>

@@ -16,6 +16,6 @@ module.exports = {
   publicPath: '',
 
   pluginOptions: {
-    cordovaPath: 'satellite'
+    cordovaPath: 'satte-mobile'
   }
 };

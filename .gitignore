@@ -25,3 +25,14 @@ yarn-error.log*
 /satellite/plugins
 /public/cordova.js
 public/
+
+# Cordova
+/satte-mobile/platforms
+/satte-mobile/plugins
+/public/cordova.js
+
+# Cordova
+/satte-mobile/platforms
+/satte-mobile/plugins
+/public/cordova.js
+satte-mobile/

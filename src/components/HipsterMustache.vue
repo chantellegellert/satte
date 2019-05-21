@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="hipster-modal">
-      <Hipster class="hipster" />
+      <Hipster class="hipster"/>
       <div class="mustache" :style="{transform:'translateY(' + moveStash.toString() + 'px)'}">
-        <Mustache :class="howClose" />
+        <Mustache :class="howClose"/>
       </div>
     </div>
     <img class="perfectHundred" v-if="howClose ==='perfect'" src="../static/100emoji.png">
@@ -28,6 +28,7 @@ export default class HipsterMustache extends Vue {
   private stashInterval: any;
   private howClose = "far";
   private moveStash = 0;
+  public output: any;
 
   constructor() {
     super();
@@ -35,17 +36,7 @@ export default class HipsterMustache extends Vue {
   }
 
   created() {
-    // where are you currently holding the phone?
-    this.myYpos = this.fakeYaxisDegree();
-    this.getYaxisDegree();
-    // want to get actual phone position which will be faked
-    this.stashInterval = setInterval(() => {
-      this.getYaxisDegree();
-    }, 1000);
-  }
-
-  public destroyed() {
-    clearInterval(this.stashInterval);
+    window.addEventListener("deviceorientation", this.handleOrientation, true);
   }
 
   private get satteYaxis() {
@@ -56,20 +47,35 @@ export default class HipsterMustache extends Vue {
     setSatteYaxis(value);
   }
 
-  private calculateDistanceAway(degree: number) {
-    return degree > this.satteYaxis
-      ? -(Math.abs(Math.min(degree, Math.max(this.satteYaxis + 15, 90)) - this.satteYaxis) / 15) * 110
-      : Math.abs(Math.max(degree, Math.max(this.satteYaxis - 15, 0)) - this.satteYaxis) / 15 * 110;
-  }
+  public handleOrientation(event: any) {
+    console.log("handleOrientation");
+    var beta = event.beta;
 
-  public getYaxisDegree() {
-    // assumes only returns positive numbers
-    let degree = this.fakeYaxisDegree();
-    this.myYpos = degree;
-    this.moveStash = this.calculateDistanceAway(this.myYpos);
+    let degree = this.calculateDistanceAway(beta);
+    this.moveStash = degree;
+    this.myYpos = beta;
 
     this.howClose = this.inRange();
     this.setStashAlign();
+  }
+
+  // only need to lift up so 0 to 90 is only valid
+  private calculateDistanceAway(degree: number) {
+    if (degree > Math.min(this.satteYaxis + 15, 90)) return -110;
+    if (degree < Math.max(this.satteYaxis - 15, 0)) return 110;
+
+    return degree > this.satteYaxis
+      ? -(
+          Math.abs(
+            Math.min(degree, Math.max(this.satteYaxis + 15, 90)) -
+              this.satteYaxis
+          ) / 15
+        ) * 110
+      : (Math.abs(
+          Math.max(degree, Math.max(this.satteYaxis - 15, 0)) - this.satteYaxis
+        ) /
+          15) *
+          110;
   }
 
   @Emit("stashAlign")
@@ -95,28 +101,6 @@ export default class HipsterMustache extends Vue {
       return "close";
     } else {
       return "far";
-    }
-  }
-
-  // keeps going until perfect note you don't have to
-  // in order to be in range, also this is where phone Y axis
-  // if will just return as is
-  public fakeYaxisDegree() {
-    // this.myYpos < 0 is for faking purposes you just pass back the phone Y axis
-    if (this.myYpos === null || this.myYpos < 0) {
-      // you can never have a negative number in this example
-      return Math.random() * ((this.satteYaxis + 15) - Math.max(this.satteYaxis - 15, 0) + 1) + Math.max(this.satteYaxis - 15, 0);
-    } else if (
-      this.myYpos >= this.satteYaxis - 1 &&
-      this.myYpos <= this.satteYaxis + 1
-    ) {
-      // if in range fake the user stopped moving phone
-      return this.satteYaxis;
-    } else if (this.myYpos > this.satteYaxis) {
-      return this.myYpos - 1;
-    } else {
-      // has to be less if not more or in range
-      return this.myYpos + 1;
     }
   }
 }

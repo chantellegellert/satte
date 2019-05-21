@@ -1,33 +1,33 @@
 <template>
-<div>
+  <div>
     <div class="satteWorld">
-        <!-- src: https://loading.io/css/ -->
-        <div v-if="!foundSatellite" class="loading lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-        <World class="world"/>
+      <Spinner v-if="!foundSatellite"></Spinner>
+      <World class="world"/>
 
-        <div class="faddedSatellites">
-            <Satellite class="topLeft" v-if="!foundSatellite" />
-            <Satellite class="bottomRight" v-if="!foundSatellite" />
-            <Satellite class="bottomLeft" v-if="!foundSatellite" />
-        </div>
+      <div class="faddedSatellites">
+        <Satellite class="topLeft" v-if="!foundSatellite"/>
+        <Satellite class="bottomRight" v-if="!foundSatellite"/>
+        <Satellite class="bottomLeft" v-if="!foundSatellite"/>
+      </div>
 
-        <div :class="foundSatellite ? 'foundSatellite' : 'faddedSatellites'"
-            class="topRight">
-            <Satellite />
-        </div>
+      <div :class="foundSatellite ? 'foundSatellite' : 'faddedSatellites'" class="topRight">
+        <Satellite/>
+      </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import World from "../static/icons/world.svg";
 import Satellite from "../static/icons/satellite.svg";
+import Spinner from "./Spinner.vue";
 
 @Component({
   components: {
     World,
-    Satellite
+    Satellite,
+    Spinner
   }
 })
 export default class FindSatteImg extends Vue {
@@ -41,8 +41,6 @@ export default class FindSatteImg extends Vue {
 </script>
 
 <style scoped lang="less">
-@import "../css/spinner.less";
-
 .logo {
   display: block;
   text-indent: -9999px;

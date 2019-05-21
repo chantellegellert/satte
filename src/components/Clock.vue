@@ -1,17 +1,19 @@
 <template>
-<div>
+  <div>
     <div class="clock">
-    <!-- Can't figure out editing size -->
-    <ClockFace :class="howClose" class="clock-face" />
-    <ClockSpoke :class="howClose" class="clock-spoke" />
+      <!-- Can't figure out editing size -->
+      <ClockFace :class="howClose" class="clock-face"/>
+      <ClockSpoke :class="howClose" class="clock-spoke"/>
 
-    <div class="clock-donutHole"></div>
-    <HourHand class="clock-hour" :style="{transform:'rotatez(' + clockPos.toString() + 'deg)' + 'translateY(10px)'}" />
-    <MinuteHand class="clock-minute" />
-    <div v-if="howClose === 'perfect'" :class="howClose" class="perfectText">Perfect!</div>
-
+      <div class="clock-donutHole"></div>
+      <HourHand
+        class="clock-hour"
+        :style="{transform:'rotatez(' + clockPos.toString() + 'deg)' + 'translateY(10px)'}"
+      />
+      <MinuteHand class="clock-minute"/>
+      <div v-if="howClose === 'perfect'" :class="howClose" class="perfectText">Perfect!</div>
     </div>
-</div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -46,13 +48,25 @@ export default class RightDirInstruct extends Vue {
   created() {
     // if want static image then just pass number to clockPos
     this.clockPos = this.useStatic;
+    this.satteZaxis = 10;
     // if want moving clock pass it -1
     if (this.useStatic < 0) {
-      this.getZaxisDegree();
-      this.clockInterval = setInterval(() => {
-        this.getZaxisDegree();
-      }, 1000);
+      window.addEventListener(
+        "deviceorientation",
+        this.handleOrientation,
+        true
+      );
     }
+  }
+
+  public handleOrientation(event: any) {
+    console.log("handleOrientation");
+    var alpha = event.alpha; // absolute, alpha, beta, gamma
+    let relative = this.calculateDistanceAway(alpha);
+    this.clockPos = relative - this.satteZaxis;
+
+    this.howClose = this.inRange();
+    this.setAlignment();
   }
 
   public destroyed() {
@@ -68,19 +82,13 @@ export default class RightDirInstruct extends Vue {
   }
 
   private calculateDistanceAway(degree: number) {
-    return degree % 360 > this.satteZaxis
-      ? 360 - Math.abs(degree % 360 - this.satteZaxis)
-      : 0 + Math.abs(degree % 360 - this.satteZaxis);
-  }
+    // TODO: get what top is intially and base rest on that
+    let newDeg = 0;
+    if (degree < 264) return -(degree - 264);
 
-  public getZaxisDegree() {
-    if (this.myZpos != this.satteZaxis) {
-      let degree = this.fakeZaxisDegree();
-      this.myZpos = degree;
-      this.clockPos = this.calculateDistanceAway(this.myZpos);
-      this.howClose = this.inRange();
-      this.setAlignment();
-    }
+    if (degree >= 264) return 360 - (degree - 264);
+
+    return 0;
   }
 
   @Emit("alignment")
@@ -91,40 +99,21 @@ export default class RightDirInstruct extends Vue {
 
   public inRange() {
     // if in range this perfect, in range is within 15 degree
-    if (this.clockPos % 360 >= 345 || this.clockPos % 360 <= 15) {
+    if (
+      this.clockPos % 360 >= 345 ||
+      (this.clockPos % 360 >= -15 && this.clockPos % 360 <= 0) ||
+      (this.clockPos % 360 <= 15 && this.clockPos >= 0)
+    ) {
       return "perfect";
-    } else if (this.clockPos % 360 > 315 || this.clockPos % 360 < 45) {
+    } else if (
+      this.clockPos % 360 >= 315 ||
+      (this.clockPos % 360 >= -45 && this.clockPos % 360 < -15) ||
+      (this.clockPos % 360 <= 45 && this.clockPos > 15)
+    ) {
       // close enough is within 45 degree
       return "close";
     } else {
       return "far";
-    }
-  }
-
-  // assume only get positive coordinates back from 0 - 360
-  // phone Z info will just be returned as is this is all faking it
-  public fakeZaxisDegree() {
-    // return perfect number if in range
-    // Note: you are still in range if perfect number not returned
-    console.log("Clock vue: fakeZaxisDegree: this.myZpos: ", this.myZpos);
-    if (this.myZpos === null || this.myZpos < 0) {
-      return Math.random() * (360 - 0 + 1) + 0; // edit this number for different starting positions
-    } else if (
-      this.myZpos % 360 >= this.satteZaxis - 15 &&
-      this.myZpos % 360 <= this.satteZaxis + 15
-    ) {
-      // if close enough go to perfect
-      return this.satteZaxis;
-    } else if (
-      this.myZpos % 360 > this.satteZaxis &&
-      this.myZpos % 360 < this.satteZaxis + 180
-    ) {
-      // if im closer to right pretend user keeps going right, higher angle
-      return this.myZpos - 10;
-    } else {
-      // if closer to left pretend user keeps going left
-      // has to be add if not subtract or in range, lower angle
-      return this.myZpos + 10;
     }
   }
 }
