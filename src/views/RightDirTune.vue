@@ -6,7 +6,7 @@
       The <b>minute hand</b> is where you're pointing
     </div>
 
-    <Clock :useStatic="-1" @alignment="setAlignment" />
+    <Clock @alignment="setAlignment" />
 
     <div class="message">
         The 

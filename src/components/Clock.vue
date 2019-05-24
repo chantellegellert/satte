@@ -48,14 +48,7 @@ export default class RightDirInstruct extends Vue {
   created() {
     // if want static image then just pass number to clockPos
     this.clockPos = this.useStatic;
-    // if want moving clock pass it -1
-    if (this.useStatic < 0) {
-      window.addEventListener(
-        "deviceorientation",
-        this.handleOrientation,
-        true
-      );
-    }
+    window.addEventListener("deviceorientation", this.handleOrientation, true);
   }
 
   public handleOrientation(event: any) {

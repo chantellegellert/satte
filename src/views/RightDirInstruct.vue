@@ -5,7 +5,7 @@
       {{ msg }}
     </div>
 
-    <Clock :useStatic="225" />
+    <ClockMini :useStatic="45" />
     
     <router-link to="/rightdirtune">
       <button class="paginationButton bColorRegular">Next</button>
@@ -15,11 +15,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import Clock from "@/components/Clock.vue";
+import ClockMini from "@/components/ClockMini.vue";
 
 @Component({
   components: {
-    Clock
+    ClockMini
   }
 })
 export default class RightDirInstruct extends Vue {

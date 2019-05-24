@@ -11,7 +11,7 @@
       </div>
 
       <div :class="foundSatellite ? 'foundSatellite' : 'faddedSatellites'" class="topRight">
-        <Satellite/>
+        <Satellite />
       </div>
     </div>
   </div>
