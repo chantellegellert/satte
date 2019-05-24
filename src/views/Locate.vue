@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { dataBaseService } from "../services/DataBaseService";
+import { dataService } from "../services/dataService";
 import FindSatteImg from "../components/FindSatteImg.vue";
 
 import {
@@ -101,7 +101,7 @@ export default class Locate extends Vue {
 
   private sendToDB(long: number, lat: number) {
     // This would be a service call but no DB
-    dataBaseService
+    dataService
       .getSatteNameDB(long, lat)
       .then(res => {
         console.log("Locate vue: sendToDB: DB res: ", res);

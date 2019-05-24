@@ -9,8 +9,6 @@
       <button class="paginationButton bColorRegular">Start</button>
     </router-link>
 
-
-
   </div>
 </template>
 
@@ -51,7 +49,4 @@ export default class Welcome extends Vue {
   padding-top: 25px;
   width: calc(100% - 60px);
 }
-
-
-
 </style>

@@ -8,7 +8,7 @@ export interface ISatte {
   coord: ISatteCoordinates;
 }
 
-class DataBaseService {
+class DataService {
   private satteliteLoc: { [key: string]: ISatte } = {}; // this will all be in data base
   constructor() {}
 
@@ -55,4 +55,4 @@ class DataBaseService {
   }
 }
 
-export const dataBaseService = new DataBaseService();
+export const dataService = new DataService();

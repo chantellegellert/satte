@@ -28,7 +28,6 @@ export default class HipsterMustache extends Vue {
   private stashInterval: any;
   private howClose = "far";
   private moveStash = 0;
-  public output: any;
 
   constructor() {
     super();
